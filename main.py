@@ -21,6 +21,7 @@ if __name__ == "__main__":
     if not args.skip_copy:
         adb.push("build/tvm_rpc", f"{folder}")
         adb.push("build/bin/libtvm_runtime.so", f"{folder}")
+        # you also need to manually copy libc++_shared.so to this folder
     adb.shell(f"chmod +x {folder}/tvm_rpc")
 
     cmd_args = " ".join(list([] if args.cmd_args is None else args.cmd_args))
