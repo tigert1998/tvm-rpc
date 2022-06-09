@@ -1,6 +1,20 @@
+import re
+import os.path as osp
 import argparse
 
 from adb_helper.adb import Adb, Android
+
+
+def parse_cmake_toolchain_file(cmake_cache):
+    with open(cmake_cache, "r") as f:
+        m = re.search('(?<=CMAKE_TOOLCHAIN_FILE:FILEPATH\=).*', f.read())
+    return m.group(0)
+
+
+def resolve_necessary_lib(cmake_toolchain_file):
+    ndk = cmake_toolchain_file[:cmake_toolchain_file.find("build")]
+    return osp.join(ndk, "toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("")
@@ -20,8 +34,13 @@ if __name__ == "__main__":
         adb.shell(f"mkdir {folder}")
 
     if not args.skip_copy:
-        adb.push("build/tvm_rpc", f"{folder}")
-        adb.push("build/bin/libtvm_runtime.so", f"{folder}")
+        adb.push("build/tvm_rpc", folder)
+        adb.push("build/bin/libtvm_runtime.so", folder)
+        adb.push(
+            resolve_necessary_lib(
+                parse_cmake_toolchain_file("build/CMakeCache.txt")),
+            folder
+        )
     adb.shell(f"chmod +x {folder}/tvm_rpc")
 
     cmd_args = " ".join(list([] if args.cmd_args is None else args.cmd_args))
