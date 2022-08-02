@@ -7,8 +7,9 @@ from adb_helper.adb import Adb, Android
 
 def parse_cmake_toolchain_file(cmake_cache):
     with open(cmake_cache, "r") as f:
-        m = re.search('(?<=CMAKE_TOOLCHAIN_FILE:FILEPATH\=).*', f.read())
-    return m.group(0)
+        m = re.search('CMAKE_TOOLCHAIN_FILE:(STRING|FILEPATH)\=.*', f.read())
+        line = m.group(0)
+        return line[line.find('=') + 1:]
 
 
 def resolve_necessary_lib(cmake_toolchain_file):
@@ -42,6 +43,7 @@ if __name__ == "__main__":
             folder
         )
     adb.shell(f"chmod +x {folder}/tvm_rpc")
+    print(adb.shell(f"ls -lh {folder}"))
 
     cmd_args = " ".join(list([] if args.cmd_args is None else args.cmd_args))
     taskset = "" if args.taskset == "" else f"taskset {args.taskset}"
