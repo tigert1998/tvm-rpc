@@ -22,6 +22,7 @@ if __name__ == "__main__":
     parser.add_argument("--serial", default="98281FFAZ009SV")
     parser.add_argument("--skip-copy", action="store_true")
     parser.add_argument("--taskset", default="")
+    parser.add_argument("--num-threads", default=1, type=int)
     parser.add_argument('--cmd-args', nargs=argparse.REMAINDER)
 
     args = parser.parse_args()
@@ -47,7 +48,7 @@ if __name__ == "__main__":
 
     cmd_args = " ".join(list([] if args.cmd_args is None else args.cmd_args))
     taskset = "" if args.taskset == "" else f"taskset {args.taskset}"
-    cmd = f"LD_LIBRARY_PATH={folder} {taskset} {folder}/tvm_rpc {cmd_args}"
+    cmd = f"LD_LIBRARY_PATH={folder} TVM_NUM_THREADS={args.num_threads} {taskset} {folder}/tvm_rpc {cmd_args}"
     print(cmd)
 
     print(adb.shell(cmd))
