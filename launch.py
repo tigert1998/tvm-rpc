@@ -56,7 +56,7 @@ if __name__ == "__main__":
     ps.append(subprocess.Popen([
         sys.executable, main.__file__, f"--serial={args.serial}", f"--taskset={args.taskset}",
         "--cmd-args", "server", "--host=0.0.0.0",
-        f"--port={args.rpc_port}", f"--port-end={args.rpc_port}",
+        f"--port={args.rpc_port}", f"--port-end={args.rpc_port + 1}",
         f"--tracker=127.0.0.1:{args.tracker_port}", f"--key={args.key}"
     ]))
 
