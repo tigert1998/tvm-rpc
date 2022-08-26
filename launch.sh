@@ -14,3 +14,8 @@ $PYTHON main.py --serial=$SERIAL --taskset=$TASKSET \
     --cmd-args server --host=0.0.0.0 \
     --port=$RPC_PORT --port-end=$(($RPC_PORT + 1)) \
     --tracker=127.0.0.1:$TRACKER_PORT --key=$KEY &
+pid=$!
+
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+
+wait $pid
