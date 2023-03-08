@@ -21,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("--tracker-port", default=9190, type=int)
     parser.add_argument("--adb-port", default=5037, type=int)
     parser.add_argument("--serial", default="98281FFAZ009SV")
+    parser.add_argument("--num-threads", default=1, type=int)
     parser.add_argument("--taskset", default="80")
     parser.add_argument("--key", default="pixel4")
     args = parser.parse_args()
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     ]))
 
     ps.append(subprocess.Popen([
-        sys.executable, main.__file__, f"--serial={args.serial}", f"--taskset={args.taskset}",
+        sys.executable, main.__file__, f"--serial={args.serial}", f"--taskset={args.taskset}", f"--num-threads={args.num_threads}",
         "--cmd-args", "server", "--host=0.0.0.0",
         f"--port={args.rpc_port}", f"--port-end={args.rpc_port + 1}",
         f"--tracker=127.0.0.1:{args.tracker_port}", f"--key={args.key}"
