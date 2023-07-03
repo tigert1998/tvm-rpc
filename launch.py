@@ -24,6 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("--num-threads", default=1, type=int)
     parser.add_argument("--taskset", default="80")
     parser.add_argument("--key", default="pixel4")
+    parser.add_argument("--start-rpc-tracker", action="store_true")
     args = parser.parse_args()
 
     ps = []
@@ -42,9 +43,10 @@ if __name__ == "__main__":
             "ssh", "-N", "-R", f"{args.tracker_port}:localhost:{args.tracker_port}", args.server
         ]))
 
-    ps.append(subprocess.Popen([
-        sys.executable, "-m", "tvm.exec.rpc_tracker", "--host=0.0.0.0", f"--port={args.tracker_port}"
-    ]))
+    if args.start_rpc_tracker:
+        ps.append(subprocess.Popen([
+            sys.executable, "-m", "tvm.exec.rpc_tracker", "--host=0.0.0.0", f"--port={args.tracker_port}"
+        ]))
 
     ps.append(subprocess.Popen([
         args.adb, "-s", args.serial, "forward", f"tcp:{args.rpc_port}", f"tcp:{args.rpc_port}"
