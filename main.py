@@ -34,13 +34,14 @@ if __name__ == "__main__":
 
     if not android.boolean(f"-d {folder}"):
         adb.shell(f"mkdir {folder}")
-
+        
     if not args.skip_copy:
-        adb.push("build/tvm_rpc", folder)
-        adb.push("build/bin/libtvm_runtime.so", folder)
+        script_folder = osp.dirname(__file__)
+        adb.push(osp.join(script_folder, "build/tvm_rpc"), folder)
+        adb.push(osp.join(script_folder, "build/bin/libtvm_runtime.so"), folder)
         adb.push(
             resolve_necessary_lib(
-                parse_cmake_toolchain_file("build/CMakeCache.txt")),
+                parse_cmake_toolchain_file(osp.join(script_folder, "build/CMakeCache.txt"))),
             folder
         )
     adb.shell(f"chmod +x {folder}/tvm_rpc")
